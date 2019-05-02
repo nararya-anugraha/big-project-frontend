@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-class Table extends Component {
+import Table from "react-bootstrap/Table";
+
+class DataTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -31,12 +33,12 @@ class Table extends Component {
     });
 
     return (
-      <table>
+      <Table {...this.props}>
         <thead>
           <tr>{tableHeaders}</tr>
         </thead>
         <tbody>{tableBody}</tbody>
-      </table>
+      </Table>
     );
   }
 }
@@ -46,4 +48,4 @@ Table.propTypes = {
   rows: PropTypes.array
 };
 
-export default Table;
+export default DataTable;
