@@ -13,7 +13,7 @@ class DataTable extends Component {
 
   render() {
     const tableHeaders = this.props.columns.map(column => {
-      return <td>{column.header}</td>;
+      return <th>{column.header}</th>;
     });
 
     let rows = this.props.rows;

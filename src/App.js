@@ -4,6 +4,9 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
+import Alert from "react-bootstrap/Alert";
+import InputGroup from "react-bootstrap/InputGroup";
+
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
@@ -40,24 +43,15 @@ class App extends Component {
   getUsers() {
     fetch("/api/user", {
       method: "POST",
-      body: JSON.stringify({
-        current_page: this.state.currentPage,
-        page_size: this.state.pageSize,
-        filter: this.state.filter
-      }),
+      body: JSON.stringify(this.state),
       headers: {
         "Content-Type": "application/json"
       }
     })
       .then(response => response.json())
       .then(pagedResponse => {
-        this.setState({
-          fetched: true,
-          users: pagedResponse.users,
-          currentPage: pagedResponse.current_page,
-          pageSize: pagedResponse.page_size,
-          totalPages: pagedResponse.total_pages
-        });
+        pagedResponse.fetched = true;
+        this.setState(pagedResponse);
       });
   }
 
@@ -117,8 +111,8 @@ class App extends Component {
         fieldName: "user_id"
       },
       {
-        header: "User Name",
-        fieldName: "user_name",
+        header: "Full Name",
+        fieldName: "full_name",
         render: formatNull
       },
       {
@@ -154,62 +148,62 @@ class App extends Component {
     ];
 
     return (
-      <Container fluid={true}>
-        <Row>
-          <Col>
-            <div>Visitor Count: {this.state.visitorCount}</div>
-          </Col>
-          <Col>
-            <div>CurrentPage: {this.state.currentPage}</div>
-            <ButtonGroup>
-              <Button type="Button" onClick={() => this.changePage("first")}>
-                First
-              </Button>
-              <Button
-                type="Button"
-                onClick={() => this.changePage("previous-fast")}
-              >
-                {"<<"}
-              </Button>
-              <Button type="Button" onClick={() => this.changePage("previous")}>
-                {"<"}
-              </Button>
-              <Button type="Button" onClick={() => this.changePage("next")}>
-                {">"}
-              </Button>
-              <Button
-                type="Button"
-                onClick={() => this.changePage("next-fast")}
-              >
-                {">>"}
-              </Button>
-              <Button type="Button" onClick={() => this.changePage("last")}>
-                Last
-              </Button>
-            </ButtonGroup>
-          </Col>
-          <Col>
-            <Form>
-              <Form.Group controlId="formPlaintextEmail">
-                <Form.Label>Filter By Name</Form.Label>
+      <Container className="mt-3" fluid={true}>
+        <Alert variant="info">Visitor Count: {this.state.visitorCount}</Alert>
+
+        <Form className="mb-3">
+          <Form.Row>
+            <Col sm={2}>
+              <Form.Label>Filter By Name</Form.Label>
+            </Col>
+            <Col sm={4}>
+              <InputGroup>
                 <Form.Control
                   type="text"
                   value={this.state.filter}
                   onChange={this.applyFilter.bind(this)}
                 />
-              </Form.Group>
-              <Button
-                onClick={() =>
-                  this.setState({ currentPage: 1, fetched: false })
-                }
-              >
-                Search
-              </Button>
-            </Form>
-          </Col>
-        </Row>
+                <InputGroup.Append>
+                  <Button
+                    onClick={() =>
+                      this.setState({ currentPage: 1, fetched: false })
+                    }
+                  >
+                    Search
+                  </Button>
+                </InputGroup.Append>
+              </InputGroup>
+            </Col>
+          </Form.Row>
+        </Form>
 
         <DataTable size="sm" columns={columns} rows={this.state.users} />
+        <ButtonGroup>
+          <Button type="Button" onClick={() => this.changePage("first")}>
+            First
+          </Button>
+          <Button
+            type="Button"
+            onClick={() => this.changePage("previous-fast")}
+          >
+            {"<<"}
+          </Button>
+          <Button type="Button" onClick={() => this.changePage("previous")}>
+            {"<"}
+          </Button>
+          <Button variant="outline-primary">
+            {this.state.currentPage} of {this.state.totalPages}
+          </Button>
+          <Button type="Button" onClick={() => this.changePage("next")}>
+            {">"}
+          </Button>
+          <Button type="Button" onClick={() => this.changePage("next-fast")}>
+            {">>"}
+          </Button>
+          <Button type="Button" onClick={() => this.changePage("last")}>
+            Last
+          </Button>
+        </ButtonGroup>
       </Container>
     );
   }
